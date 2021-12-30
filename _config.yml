@@ -11,6 +11,13 @@ author: Vivian Keith
 language: zh-CN
 timezone: ''
 
+# Search config
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 1000
+
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
