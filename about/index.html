@@ -20,31 +20,34 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":-1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Vivian Keith&#39;s homepage">
+  <meta name="description" content="Welcome!  My name is Vivian Keith, this is my homepage.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Vivian Keith">
-<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:title" content="关于">
+<meta property="og:url" content="http://example.com/about/index.html">
 <meta property="og:site_name" content="Vivian Keith">
-<meta property="og:description" content="Vivian Keith&#39;s homepage">
+<meta property="og:description" content="Welcome!  My name is Vivian Keith, this is my homepage.">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-04T03:47:45.000Z">
+<meta property="article:modified_time" content="2022-01-04T03:53:11.535Z">
 <meta property="article:author" content="Vivian Keith">
 <meta property="article:tag" content="生活，知识，诗，过去，未来">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/about/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
+    isHome : false,
     isPost : false,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>Vivian Keith</title>
+  <title>关于 | Vivian Keith
+</title>
   
 
 
@@ -186,187 +189,45 @@
       <div class="main-inner">
         <div class="content-wrap">
           
+  
+  
 
-          <div class="content index posts-expand">
+          <div class="content page posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/30/python%20%E5%8C%85%E5%88%86%E5%8F%91%E6%80%BB%E7%BB%93/">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Vivian Keith">
-      <meta itemprop="description" content="Vivian Keith's homepage">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Vivian Keith">
-    </span>
+    
+    
+    
+    <div class="post-block" lang="zh-CN">
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/30/python%20%E5%8C%85%E5%88%86%E5%8F%91%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">python 包分发总结</a>
-        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+<h1 class="post-title" itemprop="name headline">关于
+</h1>
 
-              <time title="创建时间：2021-12-30 19:12:15" itemprop="dateCreated datePublished" datetime="2021-12-30T19:12:15+08:00">2021-12-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-04 11:39:28" itemprop="dateModified" datetime="2022-01-04T11:39:28+08:00">2022-01-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
+<div class="post-meta">
+  
 
-          
+</div>
 
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
+</header>
 
       
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>平常我们习惯了使用 pip 来安装一些第三方模块，这个安装过程之所以简单，是因为模块开发者为我们默默地为我们做了所有繁杂的工作，而这个过程就是<strong>==打包==</strong>。</p>
-<p>打包，就是将你的源代码进一步封装，并且将所有的项目部署工作都事先安排好，这样使用者拿到后即装即用，不用再操心如何部署的问题（如果你不想对照着一堆部署文档手工操作的话）。</p>
-<p>不管你是在工作中，还是业余准备自己写一个可以上传到 PyPI 的项目，你都要学会如何打包你的项目。</p>
-<h1 id="1-分发包类型"><a href="#1-分发包类型" class="headerlink" title="1. 分发包类型"></a>1. 分发包类型</h1><h2 id="1-1-二进制包"><a href="#1-1-二进制包" class="headerlink" title="1.1 二进制包"></a>1.1 二进制包</h2><p>二进制包提前根据平台信息构建包，安装时省去了编译的过程，直接进行解压安装，所以安装速度较源码包来说更快。<br>由于不同平台的编译出来的包无法通用，所以在发布时，需事先编译好多个平台的包。<br>二进制包的常见格式有：</p>
-<ul>
-<li>dumb<br>包括：gztar（Unix默认），bztar，xztar，ztar，tar，zip（windows默认）</li>
-<li>rpm</li>
-<li>pkgtool</li>
-<li>sdux</li>
-<li>wininst</li>
-<li>msi</li>
-</ul>
-<h3 id="wheel"><a href="#wheel" class="headerlink" title="wheel"></a>wheel</h3><p>wheel是python新的发行标准，旨在替代传统的egg，pip &gt;=1.4的版本均支持wheel， 使用wheel作为你python库的发行文件，有如下好处：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/12/30/python%20%E5%8C%85%E5%88%86%E5%8F%91%E6%80%BB%E7%BB%93/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+      
+      
+      <div class="post-body">
+          <p>Welcome! </p>
+<p>My name is Vivian Keith, this is my homepage.</p>
+
+      </div>
+      
+      
       
     </div>
+    
 
     
     
     
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/30/%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%BF%9B%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Vivian Keith">
-      <meta itemprop="description" content="Vivian Keith's homepage">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Vivian Keith">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/30/%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%BF%9B%E7%A8%8B/" class="post-title-link" itemprop="url">学习的进程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-12-30 19:12:15 / 修改时间：19:19:30" itemprop="dateCreated datePublished" datetime="2021-12-30T19:12:15+08:00">2021-12-30</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>学习的初始阶段，我们最好能找到领域内的高级知识，也就是被其他不同阶段的学习者反复消化过又输出的知识，这样的知识可以快速帮助我们建立起对领域全貌和通用概念的认知。</p>
-<p>学习的中期，我们要能找到领域内的原始知识，也就是那些建立概念、提出方法、论证真伪的知识，这样的知识原汁原味地传达了领域内某种核心思想的缘起和沿革，某种伟大方法的构建和推演，某些基本体系的分析和综合，这是通向高阶学习的必经之路。毕竟不能一直咀嚼他人的反刍。</p>
-<p>前两个阶段我们接触的严格意义上讲不叫做知识，而是信息，没有经过自身消化的内循环。</p>
-<p>而学习的后期，我们成了高阶的学习者，对知识融会贯通之后的自然结果就是总结输出的欲望和开拓创新的热情。这个时候，我们才开始接触到尖端和前沿，我们才把真正把信息转化为知识。</p>
-<blockquote>
-<p>我们知道的越多，我们越无知。</p>
-</blockquote>
-
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/12/30/%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%BF%9B%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-
 
 
           </div>

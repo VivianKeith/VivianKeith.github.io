@@ -3,7 +3,7 @@
   <entry>
     <title>python 包分发总结</title>
     <url>/2021/12/30/python%20%E5%8C%85%E5%88%86%E5%8F%91%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>平常我们习惯了使用 pip 来安装一些第三方模块，这个安装过程之所以简单，是因为模块开发者为我们默默地为我们做了所有繁杂的工作，而这个过程就是**==打包==**。</p>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>平常我们习惯了使用 pip 来安装一些第三方模块，这个安装过程之所以简单，是因为模块开发者为我们默默地为我们做了所有繁杂的工作，而这个过程就是<strong>==打包==</strong>。</p>
 <p>打包，就是将你的源代码进一步封装，并且将所有的项目部署工作都事先安排好，这样使用者拿到后即装即用，不用再操心如何部署的问题（如果你不想对照着一堆部署文档手工操作的话）。</p>
 <p>不管你是在工作中，还是业余准备自己写一个可以上传到 PyPI 的项目，你都要学会如何打包你的项目。</p>
 <h1 id="1-分发包类型"><a href="#1-分发包类型" class="headerlink" title="1. 分发包类型"></a>1. 分发包类型</h1><h2 id="1-1-二进制包"><a href="#1-1-二进制包" class="headerlink" title="1.1 二进制包"></a>1.1 二进制包</h2><p>二进制包提前根据平台信息构建包，安装时省去了编译的过程，直接进行解压安装，所以安装速度较源码包来说更快。<br>由于不同平台的编译出来的包无法通用，所以在发布时，需事先编译好多个平台的包。<br>二进制包的常见格式有：</p>
@@ -17,110 +17,80 @@
 </ul>
 <h3 id="wheel"><a href="#wheel" class="headerlink" title="wheel"></a>wheel</h3><p>wheel是python新的发行标准，旨在替代传统的egg，pip &gt;=1.4的版本均支持wheel， 使用wheel作为你python库的发行文件，有如下好处：</p>
 <ol>
-<li> 纯Python和本机C扩展软件包的安装速度更快</li>
-<li> 避免执行任意代码进行安装。</li>
-<li> C扩展的安装不需要在Linux，Windows或macOS上进行编译</li>
-<li> 允许更好地缓存以进行测试和持续集成</li>
-<li> 在安装过程中创建.pyc文件，以确保它们与使用的Python解释器匹配</li>
-<li> 跨平台和机器的安装更加一致</li>
+<li>纯Python和本机C扩展软件包的安装速度更快</li>
+<li>避免执行任意代码进行安装。</li>
+<li>C扩展的安装不需要在Linux，Windows或macOS上进行编译</li>
+<li>允许更好地缓存以进行测试和持续集成</li>
+<li>在安装过程中创建.pyc文件，以确保它们与使用的Python解释器匹配</li>
+<li>跨平台和机器的安装更加一致</li>
 </ol>
 <p>本质上，wheel是一个zip压缩文件，将.whl扩展名替换为.zip，你就可以使用zip应用程序打开它，可以想象pip在安装wheel文件时，其过程也正是对它进行解压，然后复制到site-packges目录下，当然，实际的过程要比我刚才描述的要复杂一些，毕竟有很多事情要做，比如安装依赖。下面的代码向你展示如何解压一个wheel安装文件：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> zipfile <span class="keyword">import</span> ZipFile</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> ZipFile(<span class="string">&quot;notebook-7.0.0-py3-none-any.whl&quot;</span>, allowZip64=<span class="literal">True</span>) <span class="keyword">as</span> z:</span><br><span class="line">    z.extractall(<span class="string">&quot;./notebook&quot;</span>)</span><br></pre></td></tr></table></figure>
-
 <p>解压后，可以在notebook目录下找到两个文件夹，分别是notebook-7.0.0.dist-info 和 notebook， notebook是源文件，notebook-7.0.0.dist-info是一些关键的安装信息， entry_points.txt中记录的是notebook的命令入口信息，METADATA记录了notebook的元信息，比如安装依赖，适用的平台，支持的python版本等等，pip就是根据这里的信息对库进行安装的。</p>
 <h3 id="egg"><a href="#egg" class="headerlink" title="egg"></a>egg</h3><p>Egg 格式是由 setuptools 在 2004 年引入，而 Wheel 格式是由 PEP427 在 2012 年定义。Wheel 的出现是为了替代 Egg，它的本质是一个zip包，其现在被认为是 Python 的二进制包的标准格式。<br>以下是 Wheel 和 Egg 的主要区别：</p>
 <ul>
-<li>  Wheel 有一个官方的 PEP427 来定义，而 Egg 没有 PEP 定义</li>
-<li>  Wheel 是一种分发格式，即打包格式。而 Egg 既是一种分发格式，也是一种运行时安装的格式，并且是可以被直接 import</li>
-<li>  Wheel 文件不会包含 .pyc 文件</li>
-<li>  Wheel 使用和 PEP376 兼容的 .dist-info 目录，而 Egg 使用 .egg-info 目录</li>
-<li>  Wheel 有着更丰富的命名规则。</li>
-<li>  Wheel 是有版本的。每个 Wheel 文件都包含 wheel 规范的版本和打包的实现</li>
-<li>  Wheel 在内部被 sysconfig path type 管理，因此转向其他格式也更容易</li>
+<li>Wheel 有一个官方的 PEP427 来定义，而 Egg 没有 PEP 定义</li>
+<li>Wheel 是一种分发格式，即打包格式。而 Egg 既是一种分发格式，也是一种运行时安装的格式，并且是可以被直接 import</li>
+<li>Wheel 文件不会包含 .pyc 文件</li>
+<li>Wheel 使用和 PEP376 兼容的 .dist-info 目录，而 Egg 使用 .egg-info 目录</li>
+<li>Wheel 有着更丰富的命名规则。</li>
+<li>Wheel 是有版本的。每个 Wheel 文件都包含 wheel 规范的版本和打包的实现</li>
+<li>Wheel 在内部被 sysconfig path type 管理，因此转向其他格式也更容易</li>
 </ul>
 <h2 id="1-2-源码包"><a href="#1-2-源码包" class="headerlink" title="1.2 源码包"></a>1.2 源码包</h2><p>源码包安装的过程，是先解压，再编译，最后才安装，所以它是跨平台的，由于每次安装都要进行编译，相对二进包安装方式来说安装速度较慢。</p>
 <p>源码包的本质是一个压缩包，其常见的格式有：</p>
-<p><img src="https://pic1.zhimg.com/v2-dffd77a245997a841eb426d9c0ce5184_b.jpg"></p>
+<p><img src="https://pic1.zhimg.com/v2-dffd77a245997a841eb426d9c0ce5184_b.jpg" alt=""></p>
 <h1 id="2-打包工具"><a href="#2-打包工具" class="headerlink" title="2. 打包工具"></a>2. 打包工具</h1><p>Python 发展了这么些年了，项目打包工具也已经很成熟了。他们都有哪些呢？</p>
 <p>你可能听过 disutils、 distutils 、distutils2、setuptools等等，好像很熟悉，却又很陌生，他们都是什么关系呢？</p>
 <h2 id="tldr"><a href="#tldr" class="headerlink" title="tldr:"></a>tldr:</h2><blockquote>
 <p>setuptools是增强版的distutils，基本满足大型项目的安装和发布，掌握setuptools就可以了。</p>
 </blockquote>
-<h2 id="包分发始祖：distutils"><a href="#包分发始祖：distutils" class="headerlink" title="包分发始祖：distutils"></a>包分发始祖：distutils</h2><p><code>distutils</code> 是 Python 的一个标准库，从命名上很容易看出它是一个分发（distribute）工具（utlis），它是 Python 官方开发的一个分发打包工具，所有后续的打包工具，全部都是基于它进行开发的。<br><code>distutils</code> 的精髓在于编写 setup.py，它是模块分发与安装的指导文件。<br>那么如何编写 setup.py 呢？这里面的内容非常多，我会在后面进行详细的解析，请你耐心往下看。<br>你有可能没写过 setup.py ，但你绝对使用过 setup.py 来做一些事情，比如下面这条命令，我们经常用它来进行模块的安装。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py install</span><br></pre></td></tr></table></figure>
-
+<h2 id="包分发始祖：distutils"><a href="#包分发始祖：distutils" class="headerlink" title="包分发始祖：distutils"></a>包分发始祖：distutils</h2><p><code>distutils</code> 是 Python 的一个标准库，从命名上很容易看出它是一个分发（distribute）工具（utlis），它是 Python 官方开发的一个分发打包工具，所有后续的打包工具，全部都是基于它进行开发的。<br><code>distutils</code> 的精髓在于编写 setup.py，它是模块分发与安装的指导文件。<br>那么如何编写 setup.py 呢？这里面的内容非常多，我会在后面进行详细的解析，请你耐心往下看。<br>你有可能没写过 setup.py ，但你绝对使用过 setup.py 来做一些事情，比如下面这条命令，我们经常用它来进行模块的安装。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py install</span><br></pre></td></tr></table></figure></p>
 <p>这样的安装方法是通过源码安装，与之对应的是通过二进制软件包的安装，同样我也会在后面进行介绍。</p>
 <h2 id="分发工具升级：setuptools"><a href="#分发工具升级：setuptools" class="headerlink" title="分发工具升级：setuptools"></a>分发工具升级：setuptools</h2><p><code>setuptools</code> 是 distutils 增强版，不包括在标准库中。其扩展了很多功能，能够帮助开发者更好的创建和分发 Python 包。大部分 Python 用户都会使用更先进的 setuptools 模块。<br><strong>distribute</strong>，或许你在其他地方也见过它，这里也提一下。<br>distribute 是 setuptools 有一个分支版本，分支的原因可能是有一部分开发者认为 setuptools 开发太慢了。但现在，distribute 又合并回了 setuptools 中。因此，我们可以认为它们是同一个东西。<br>还有一个大包分发工具是distutils2，其试图尝试充分利用distutils，detuptools 和 distribute 并成为 Python 标准库中的标准工具。但该计划并没有达到预期的目的，且已经是一个废弃的项目。<br>因此，setuptools 是一个优秀的，可靠的 Python 包安装与分发工具。</p>
 <p>那么如何在一个干净的环境中安装 setuptools 呢？<br>主要以下几种方法：</p>
 <ol>
-<li><p>源码安装：在 <a href="https://link.zhihu.com/?target=https://pypi.org/project/setuptools/%23files">https://pypi.org/project/setuptools/#files</a> 中下载 zip 包 解压执行 <code>python setup.py install</code> 安装</p>
-</li>
+<li>源码安装：在 <a href="https://link.zhihu.com/?target=https%3A//pypi.org/project/setuptools/%23files">https://pypi.org/project/setuptools/#files</a> 中下载 zip 包 解压执行 <code>python setup.py install</code> 安装</li>
 <li><p>通过引导程序安装：下载引导程序，它可以用来下载或者更新最新版本的 setuptools</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ wget http://peak.telecommunity.com/dist/ez_setup.py</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装</span></span><br><span class="line">$ python ez_setup.py</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新，以下两种任选</span></span><br><span class="line">$ python ez_setup.py –U setuptools</span><br><span class="line">$ pip install -U setuptools</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ wget http://peak.telecommunity.com/dist/ez_setup.py</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装</span></span><br><span class="line">$ python ez_setup.py</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新，以下两种任选</span></span><br><span class="line">$ python ez_setup.py –U setuptools</span><br><span class="line">$ pip install -U setuptools</span><br></pre></td></tr></table></figure>
+</li>
 <li><p>包管理工具直接安装：<code>sudo apt-get install python-setuptools</code></p>
 </li>
-<li><p>pip 安装：<code>pip install setuptools</code></p>
-</li>
+<li>pip 安装：<code>pip install setuptools</code></li>
 </ol>
 <h1 id="3-使用-setuptools-构建分发包"><a href="#3-使用-setuptools-构建分发包" class="headerlink" title="3. 使用 setuptools 构建分发包"></a>3. 使用 setuptools 构建分发包</h1><h2 id="step1：编写setup-py"><a href="#step1：编写setup-py" class="headerlink" title="step1：编写setup.py"></a>step1：编写<code>setup.py</code></h2><p>比如一个<code>Hibiscus</code>项目，需要在项目根目录下编写一个<code>setup.py</code>文件，项目结构如下:</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── Hibiscus</span><br><span class="line">│   ├── __init__.py</span><br><span class="line">│   ├── decorator</span><br><span class="line">│   │   ├── __init__.py</span><br><span class="line">│   │   ├── __pycache__</span><br><span class="line">│   │   └── func_decorator.py</span><br><span class="line">│   └── func_utils</span><br><span class="line">│       ├── __init__.py</span><br><span class="line">│       └── utils.py</span><br><span class="line">└── setup.py</span><br></pre></td></tr></table></figure>
-
-<p><code>setup.py</code>中需要引入<code>setuptools</code>，通过配置<code>setup</code>函数的参数完成对分发包的控制。一个简单的<code>setup.py</code>内容示例如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> setuptools <span class="keyword">import</span> setup, find_packages</span><br><span class="line"></span><br><span class="line">setup(</span><br><span class="line">    name=<span class="string">&#x27;Hibiscus&#x27;</span>,</span><br><span class="line">    version=<span class="string">&#x27;0.0.1&#x27;</span>,</span><br><span class="line">    author=<span class="string">&#x27;酷python&#x27;</span>,</span><br><span class="line">    author_email=<span class="string">&#x27;pythonlinks@163.com&#x27;</span>,</span><br><span class="line">    description=<span class="string">&#x27;打包示例&#x27;</span>,</span><br><span class="line">    url=<span class="string">&#x27;http://www.coolpython.net&#x27;</span>,</span><br><span class="line">    packages=find_packages(),</span><br><span class="line">    classifiers=[</span><br><span class="line">        <span class="string">&quot;Programming Language :: Python :: 3&quot;</span>,</span><br><span class="line">        <span class="string">&quot;License :: OSI Approved :: MIT License&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Operating System :: OS Independent&quot;</span>,</span><br><span class="line">    ],</span><br><span class="line">    python_requires=<span class="string">&#x27;&gt;=3.6&#x27;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
+<p><code>setup.py</code>中需要引入<code>setuptools</code>，通过配置<code>setup</code>函数的参数完成对分发包的控制。一个简单的<code>setup.py</code>内容示例如下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> setuptools <span class="keyword">import</span> setup, find_packages</span><br><span class="line"></span><br><span class="line">setup(</span><br><span class="line">    name=<span class="string">&#x27;Hibiscus&#x27;</span>,</span><br><span class="line">    version=<span class="string">&#x27;0.0.1&#x27;</span>,</span><br><span class="line">    author=<span class="string">&#x27;酷python&#x27;</span>,</span><br><span class="line">    author_email=<span class="string">&#x27;pythonlinks@163.com&#x27;</span>,</span><br><span class="line">    description=<span class="string">&#x27;打包示例&#x27;</span>,</span><br><span class="line">    url=<span class="string">&#x27;http://www.coolpython.net&#x27;</span>,</span><br><span class="line">    packages=find_packages(),</span><br><span class="line">    classifiers=[</span><br><span class="line">        <span class="string">&quot;Programming Language :: Python :: 3&quot;</span>,</span><br><span class="line">        <span class="string">&quot;License :: OSI Approved :: MIT License&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Operating System :: OS Independent&quot;</span>,</span><br><span class="line">    ],</span><br><span class="line">    python_requires=<span class="string">&#x27;&gt;=3.6&#x27;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
 <p><code>setup</code>函数的参数具体含义可以看<a href="http://www.coolpython.net/python_senior/project/op_py_setup_install.html">这里</a>和<a href="https://zhuanlan.zhihu.com/p/276461821">这里</a>。</p>
 <h2 id="step2：打包"><a href="#step2：打包" class="headerlink" title="step2：打包"></a>step2：打包</h2><p>有了上面的 setup.py 文件，我们就可以打出各种安装包，主要分为两类：sdist 和 bdist。<br>sdist指的是source distribution，源码分发包。<br>bdist指的是built distribution, 二进制分发包。</p>
 <p>通过执行<code>python setup.py sdist/bdist</code>来进行构建对应的源码包或二进制包。</p>
 <p>下面分别进行说明：</p>
-<h3 id="构建源码包"><a href="#构建源码包" class="headerlink" title="构建源码包"></a>构建源码包</h3><p>构建源码包的命令为：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py sdist</span><br></pre></td></tr></table></figure>
-
+<h3 id="构建源码包"><a href="#构建源码包" class="headerlink" title="构建源码包"></a>构建源码包</h3><p>构建源码包的命令为：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py sdist</span><br></pre></td></tr></table></figure></p>
 <p>使用 sdist 将根据当前平台创建默认格式的存档。在类 Unix 平台上，将创建后缀后为 <code>.tar.gz</code> 的 gzip 压缩的tar文件分发包，而在Windows上为<code>.zip</code>文件。<br>当然，你也可以通过指定你要的发布包格式来打破这个默认行为：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py sdist --formats=gztar,zip</span><br></pre></td></tr></table></figure>
-
-<p>执行后，项目目录下便会多出 dist 和 .egg-info 目录，dist 内保存了我们打好的包，上面命令使用 –formats 指定了打出 .tar.gz 和 .zip 包，如果不指定则如上表根据具体平台默认格式打包。 包的名称为 setup.py 中定义的 name, version以及指定的包格式，格式如：firstApp01-0.0.1.tar.gz。<br>前文说过，源码包实质上是一个压缩包，我们可以指定的源码包格式有哪些呢？<br><img src="https://pic2.zhimg.com/v2-7416d2c5ffd4fde928d7bd214ea59d39_b.jpg"></p>
+<p>执行后，项目目录下便会多出 dist 和 .egg-info 目录，dist 内保存了我们打好的包，上面命令使用 —formats 指定了打出 .tar.gz 和 .zip 包，如果不指定则如上表根据具体平台默认格式打包。 包的名称为 setup.py 中定义的 name, version以及指定的包格式，格式如：firstApp01-0.0.1.tar.gz。<br>前文说过，源码包实质上是一个压缩包，我们可以指定的源码包格式有哪些呢？<br><img src="https://pic2.zhimg.com/v2-7416d2c5ffd4fde928d7bd214ea59d39_b.jpg" alt=""></p>
 <p>对以上的格式，有几点需要注意一下：</p>
 <ul>
-<li>  在版本3.5中才添加了对 <code>xztar</code> 格式的支持</li>
-<li>  zip 格式需要你事先已安装相应的模块：zip程序或zipfile模块（已成为Python的标准库）</li>
-<li>  ztar 格式正在弃用，请尽量不要使用</li>
+<li>在版本3.5中才添加了对 <code>xztar</code> 格式的支持</li>
+<li>zip 格式需要你事先已安装相应的模块：zip程序或zipfile模块（已成为Python的标准库）</li>
+<li>ztar 格式正在弃用，请尽量不要使用</li>
 </ul>
 <p>另外，如果您希望归档文件的所有文件归root拥有，可以这样指定</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py sdist --owner=root --group=root</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="构建二进制包"><a href="#构建二进制包" class="headerlink" title="构建二进制包"></a>构建二进制包</h3><p>构建源码包的命令为：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py bdist</span><br></pre></td></tr></table></figure>
-
-<p>二进制包相比于源码包，由于预先构建好，所以安装更快。使用上，和 sdist 一样，可以使用 –formats 指定包格式。如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py bdist --formats=rpm</span><br></pre></td></tr></table></figure>
-<p>可选的格式有：<code>tar.gz</code>,<code>rpm</code>，<code>srpm</code>，<code>wininst</code>，<code>msi</code>等。<br>同时为了简化操作，setuptools 提供了如下命令：</p>
+<h3 id="构建二进制包"><a href="#构建二进制包" class="headerlink" title="构建二进制包"></a>构建二进制包</h3><p>构建源码包的命令为：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py bdist</span><br></pre></td></tr></table></figure></p>
+<p>二进制包相比于源码包，由于预先构建好，所以安装更快。使用上，和 sdist 一样，可以使用 —formats 指定包格式。如：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py bdist --formats=rpm</span><br></pre></td></tr></table></figure><br>可选的格式有：<code>tar.gz</code>,<code>rpm</code>，<code>srpm</code>，<code>wininst</code>，<code>msi</code>等。<br>同时为了简化操作，setuptools 提供了如下命令：</p>
 <ol>
-<li><code>python setup.py bdist_wininst/bdist_msi</code></li>
+<li><code>python setup.py bdist_wininst/bdist_msi</code><br><strong>note</strong>: 在windows中我们习惯了双击 exe/msi 进行软件的安装，Python 模块的安装也同样支持 打包成 exe/msi 这样的二进制软件包。</li>
+<li><code>python setup.py bdist_rpm</code><br><strong>note</strong>:在 Linux 中，大家也习惯了使用 rpm 来安装包，对此你可以使用这条命令实现 rpm 包的构建</li>
+<li><code>python setup.py bdist_egg</code><br><strong>note</strong>:若你喜欢使用 easy_install 或者 pip 来安装离线包。你可以将其打包成 egg 包。==注意==：egg 包是过时的，下文所述的 wheel 包才是推荐的新标准。</li>
 </ol>
-<p><strong>note</strong>: 在windows中我们习惯了双击 exe/msi 进行软件的安装，Python 模块的安装也同样支持 打包成 exe/msi 这样的二进制软件包。<br>2. <code>python setup.py bdist_rpm</code><br><strong>note</strong>:在 Linux 中，大家也习惯了使用 rpm 来安装包，对此你可以使用这条命令实现 rpm 包的构建<br>3. <code>python setup.py bdist_egg</code><br><strong>note</strong>:若你喜欢使用 easy_install 或者 pip 来安装离线包。你可以将其打包成 egg 包。==注意==：egg 包是过时的，下文所述的 wheel 包才是推荐的新标准。</p>
-<p>如果我们的项目，需要安装到多个平台下，既有 Windows 也有 Linux，按照上面的方法，多种格式我们要执行多次命令，为了方便，我们可以一步到位，执行如下命令，即可生成多个格式的进制：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py bdist</span><br></pre></td></tr></table></figure>
-
-<p><strong>构建 wheel 包</strong><br>Wheel Wheel 也是一种 built 包，而且是官方推荐的打包方式。也许你曾经遇见或使用过 egg 包，但现在 <a href="https://wheel.readthedocs.io/en/stable/">wheel</a> 是官方推荐的打包方式。<br>使用 wheel 打包，首先要安装 wheel：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip install wheel</span><br></pre></td></tr></table></figure>
-
+<p>如果我们的项目，需要安装到多个平台下，既有 Windows 也有 Linux，按照上面的方法，多种格式我们要执行多次命令，为了方便，我们可以一步到位，执行如下命令，即可生成多个格式的进制：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py bdist</span><br></pre></td></tr></table></figure></p>
+<p><strong>构建 wheel 包</strong><br>Wheel Wheel 也是一种 built 包，而且是官方推荐的打包方式。也许你曾经遇见或使用过 egg 包，但现在 <a href="https://wheel.readthedocs.io/en/stable/">wheel</a> 是官方推荐的打包方式。<br>使用 wheel 打包，首先要安装 wheel：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip install wheel</span><br></pre></td></tr></table></figure></p>
 <p>然后使用 <code>bdist_wheel</code> 打包：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py bdist_wheel</span><br></pre></td></tr></table></figure>
-
-<p>执行成功后，目录下除了 dist 和 .egg-info 目录外，还有一个 build 目录用于存储打包中间数据。 wheel 包的名称如 firstApp01-0.0.1-py3-none-any.whl，其中 py3 指明只支持 Python3。可以使用参数 –universal，包名如 mfirstApp-0.0.1-py2.py3-none-any.whl，表明 wheel 包同时支持 Python2 和 Python3使用 universal 也成为通用 wheel 包，反之称为纯 wheel 包。</p>
-<p>也可以使用 wheel 直接打包：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip wheel --wheel-dir=./wheel/</span><br></pre></td></tr></table></figure>
-<p>–wheel-dir 指定生成.whl文件的存储位置，上面的命令，是进入到setup.py文件所在目录执行的，因此使用的./ 表示当前目录，你可以在任意位置执行上面的命令，但是最后一部分必须是setup.py所在的目录。在setup.py所在的目录里，请将库的安装依赖写入到requirements.txt文件中，在制作.whl 安装包时会将requirements.txt里的安装依赖写入到dist-info 里的METADATA文件中。</p>
-<h1 id="分发包怎么安装？"><a href="#分发包怎么安装？" class="headerlink" title="分发包怎么安装？"></a>分发包怎么安装？</h1><h2 id="从项目安装"><a href="#从项目安装" class="headerlink" title="从项目安装"></a>从项目安装</h2><p>正常情况下，我们都是通过以上构建的源码包或者二进制包进行模块的安装。<br>但在编写 <code>setup.py</code>的过程中，可能不能一步到位，需要多次调试，这时候如何测试自己写的 setup.py 文件是可用的呢？<br>这时候你可以使用这条命令，它会将你的模块安装至系统全局环境中：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py install</span><br></pre></td></tr></table></figure>
-<p>或者：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip install .</span><br></pre></td></tr></table></figure>
-<p>应用开发过程中会频繁变更，每次安装都需要先卸载旧版本很麻烦。使用 develop 开发模式安装的话，实际代码不会拷贝到 site-packages 下，而是除一个指向当前应用的链接（.egg-link）。这样当前位置的源码改动就会马上反映到 site-packages，在修改包之后不用再安装就能生效，便于调试。使用如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py develop</span><br></pre></td></tr></table></figure>
-<p>或者：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip install -e .</span><br></pre></td></tr></table></figure>
-
+<p>执行成功后，目录下除了 dist 和 .egg-info 目录外，还有一个 build 目录用于存储打包中间数据。 wheel 包的名称如 firstApp01-0.0.1-py3-none-any.whl，其中 py3 指明只支持 Python3。可以使用参数 —universal，包名如 mfirstApp-0.0.1-py2.py3-none-any.whl，表明 wheel 包同时支持 Python2 和 Python3使用 universal 也成为通用 wheel 包，反之称为纯 wheel 包。</p>
+<p>也可以使用 wheel 直接打包：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip wheel --wheel-dir=./wheel/</span><br></pre></td></tr></table></figure><br>—wheel-dir 指定生成.whl文件的存储位置，上面的命令，是进入到setup.py文件所在目录执行的，因此使用的./ 表示当前目录，你可以在任意位置执行上面的命令，但是最后一部分必须是setup.py所在的目录。在setup.py所在的目录里，请将库的安装依赖写入到requirements.txt文件中，在制作.whl 安装包时会将requirements.txt里的安装依赖写入到dist-info 里的METADATA文件中。</p>
+<h1 id="分发包怎么安装？"><a href="#分发包怎么安装？" class="headerlink" title="分发包怎么安装？"></a>分发包怎么安装？</h1><h2 id="从项目安装"><a href="#从项目安装" class="headerlink" title="从项目安装"></a>从项目安装</h2><p>正常情况下，我们都是通过以上构建的源码包或者二进制包进行模块的安装。<br>但在编写 <code>setup.py</code>的过程中，可能不能一步到位，需要多次调试，这时候如何测试自己写的 setup.py 文件是可用的呢？<br>这时候你可以使用这条命令，它会将你的模块安装至系统全局环境中：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py install</span><br></pre></td></tr></table></figure><br>或者：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip install .</span><br></pre></td></tr></table></figure><br>应用开发过程中会频繁变更，每次安装都需要先卸载旧版本很麻烦。使用 develop 开发模式安装的话，实际代码不会拷贝到 site-packages 下，而是除一个指向当前应用的链接（.egg-link）。这样当前位置的源码改动就会马上反映到 site-packages，在修改包之后不用再安装就能生效，便于调试。使用如下：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py develop</span><br></pre></td></tr></table></figure><br>或者：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip install -e .</span><br></pre></td></tr></table></figure></p>
 <h2 id="从分发包安装"><a href="#从分发包安装" class="headerlink" title="从分发包安装"></a>从分发包安装</h2><p>构建好分发包后，可以使用pip安装：</p>
 <ul>
 <li>安装二进制包（wheel）：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip install dist/Hibiscus-0.0.1-py3-none-any.whl</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
@@ -128,48 +98,30 @@
 这种方法先编译出wheel文件，然后再进行安装，如下是其安装过程</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Processing ./Hibiscus-0.0.1.tar.gz</span><br><span class="line">Building wheels <span class="keyword">for</span> collected packages: Hibiscus</span><br><span class="line">  Building wheel <span class="keyword">for</span> Hibiscus (setup.py) ... <span class="keyword">done</span></span><br><span class="line">  Created wheel <span class="keyword">for</span> Hibiscus: filename=Hibiscus-0.0.1-py3-none-any.whl size=2382 sha256=e4f46223ac138f0b30c3c7fdad3f3284f964144d35e31188fb3d58761aced350</span><br><span class="line">  Stored <span class="keyword">in</span> directory: /Users/kwsy/Library/Caches/pip/wheels/6f/9f/44/951064df5b5bba5bc41bf713804006c271b2a6946e139dd79c</span><br><span class="line">Successfully built Hibiscus</span><br><span class="line">Installing collected packages: Hibiscus</span><br><span class="line">Successfully installed Hibiscus-0.0.1</span><br></pre></td></tr></table></figure>
-
 <ul>
 <li>解压tar.gz文件然后使用setup.py安装</li>
 </ul>
 <p>对tar.gz解压，解压后的文件目录如下</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── Hibiscus.egg-info</span><br><span class="line">│   ├── PKG-INFO</span><br><span class="line">│   ├── SOURCES.txt</span><br><span class="line">│   ├── dependency_links.txt</span><br><span class="line">│   └── top_level.txt</span><br><span class="line">├── PKG-INFO</span><br><span class="line">├── build</span><br><span class="line">│   ├── bdist.macosx-10.9-x86_64</span><br><span class="line">│   └── lib</span><br><span class="line">│       └── hibiscus</span><br><span class="line">│           ├── __init__.py</span><br><span class="line">│           ├── decorator</span><br><span class="line">│           │   ├── __init__.py</span><br><span class="line">│           │   └── func_decorator.py</span><br><span class="line">│           └── func_utils</span><br><span class="line">│               ├── __init__.py</span><br><span class="line">│               └── utils.py</span><br><span class="line">├── dist</span><br><span class="line">│   └── Hibiscus-0.0.1-py3.6.egg</span><br><span class="line">├── hibiscus</span><br><span class="line">│   ├── __init__.py</span><br><span class="line">│   ├── decorator</span><br><span class="line">│   │   ├── __init__.py</span><br><span class="line">│   │   └── func_decorator.py</span><br><span class="line">│   └── func_utils</span><br><span class="line">│       ├── __init__.py</span><br><span class="line">│       └── utils.py</span><br><span class="line">├── setup.cfg</span><br><span class="line">└── setup.py</span><br></pre></td></tr></table></figure>
-
-<p>执行命令：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> python3 setup.py install</span></span><br></pre></td></tr></table></figure>
-
+<p>执行命令：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> python3 setup.py install</span></span><br></pre></td></tr></table></figure></p>
 <p>注意看dist目录里的Hibiscus-0.0.1-py3.6.egg，就是这个文件被安装到了site-packages目录下。</p>
 <p>==使用pip安装和python命令安装的区别==：</p>
 <p>使用python命令从项目源码直接进行安装：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python3 setup.py install</span><br></pre></td></tr></table></figure>
-
 <p>经过这种方式安装，会将Hibiscus-0.0.1-py3.6.egg文件安装到site-packages目录下，而如果使用pip命令安装，则会在site-packages目录下创建一个名为hibiscus的目录, 在这个目录下有程序的源码。</p>
 <p>==简单总结==：pip安装后可以在site-packages目录下找到源码，而使用python命令直接安装，则只能找到一个.egg文件。</p>
 <h2 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h2><p>无论用那种方式安装，都可以用<code>pip uninstall</code>进行卸载。</p>
 <h1 id="4-将分发包上传到-PyPI"><a href="#4-将分发包上传到-PyPI" class="headerlink" title="4. 将分发包上传到 PyPI"></a>4. 将分发包上传到 PyPI</h1><p>我么已经知道了如何打包自己的项目，若你觉得自己开发的模块非常不错，想要 share 给其他人使用，你可以将其上传到 <a href="https://pypi.org/">PyPi </a>（Python Package Index）上，它是 Python 官方维护的第三方包仓库，用于统一存储和管理开发者发布的 Python 包。</p>
-<h2 id="直接使用-setuptools-上传"><a href="#直接使用-setuptools-上传" class="headerlink" title="直接使用 setuptools 上传"></a>直接使用 setuptools 上传</h2><p>如果要发布自己的包，需要先到 pypi 上注册账号。然后创建 <code>~/.pypirc</code> 文件，此文件中配置 PyPI 访问地址和账号。如的.pypirc文件内容请根据自己的账号来修改。<br>典型的 .pypirc 文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[distutils]</span><br><span class="line">index-servers = pypi</span><br><span class="line"></span><br><span class="line">[pypi]</span><br><span class="line">username:xxx</span><br><span class="line">password:xxx</span><br></pre></td></tr></table></figure>
-
-<p>然后使用这条命令进行信息注册，完成后，你可以在 PyPi 上看到项目信息。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py register</span><br></pre></td></tr></table></figure>
-
-<p>注册完了后，你还要上传源码包，别人才使用下载安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py upload</span><br></pre></td></tr></table></figure>
-
+<h2 id="直接使用-setuptools-上传"><a href="#直接使用-setuptools-上传" class="headerlink" title="直接使用 setuptools 上传"></a>直接使用 setuptools 上传</h2><p>如果要发布自己的包，需要先到 pypi 上注册账号。然后创建 <code>~/.pypirc</code> 文件，此文件中配置 PyPI 访问地址和账号。如的.pypirc文件内容请根据自己的账号来修改。<br>典型的 .pypirc 文件<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[distutils]</span><br><span class="line">index-servers = pypi</span><br><span class="line"></span><br><span class="line">[pypi]</span><br><span class="line">username:xxx</span><br><span class="line">password:xxx</span><br></pre></td></tr></table></figure></p>
+<p>然后使用这条命令进行信息注册，完成后，你可以在 PyPi 上看到项目信息。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py register</span><br></pre></td></tr></table></figure></p>
+<p>注册完了后，你还要上传源码包，别人才使用下载安装<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python setup.py upload</span><br></pre></td></tr></table></figure></p>
 <p>或者也可以使用 <code>twine</code> 工具注册上传，它是一个专门用于与 pypi 进行交互的工具，详情可以参考官网：</p>
-<h2 id="使用-twine-上传"><a href="#使用-twine-上传" class="headerlink" title="使用 twine 上传"></a>使用 twine 上传</h2><p>虽然 setuptools 支持使用 setup.py upload 上传包文件到 PyPI，但只支持 HTTP 而被新的 twine 取代，它是一个专门用于与 pypi 进行交互的工具同样的，需要先安装 <a href="https://www.ctolib.com/twine.html">twine</a>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip install twine</span><br></pre></td></tr></table></figure>
-
-<p>使用 twine 上传 使用 upload：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ twine upload dist/*</span><br></pre></td></tr></table></figure>
-
-<p>输入 username 和 password 即上传至 PyPI。如果不想每次输入账号密码，同样可以在家目录下创建 <code>~/.pypirc</code> 文件，内容如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[distutils]</span><br><span class="line">index-servers =</span><br><span class="line">    pypi</span><br><span class="line">    pypitest</span><br><span class="line"></span><br><span class="line">[pypi]</span><br><span class="line">username: </span><br><span class="line">password: </span><br><span class="line"></span><br><span class="line">[pypitest]</span><br><span class="line">repository: https://test.pypi.org/legacy/</span><br><span class="line">username: </span><br><span class="line">password:</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
-
+<h2 id="使用-twine-上传"><a href="#使用-twine-上传" class="headerlink" title="使用 twine 上传"></a>使用 twine 上传</h2><p>虽然 setuptools 支持使用 setup.py upload 上传包文件到 PyPI，但只支持 HTTP 而被新的 twine 取代，它是一个专门用于与 pypi 进行交互的工具同样的，需要先安装 <a href="https://www.ctolib.com/twine.html">twine</a>：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip install twine</span><br></pre></td></tr></table></figure></p>
+<p>使用 twine 上传 使用 upload：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ twine upload dist/*</span><br></pre></td></tr></table></figure></p>
+<p>输入 username 和 password 即上传至 PyPI。如果不想每次输入账号密码，同样可以在家目录下创建 <code>~/.pypirc</code> 文件，内容如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[distutils]</span><br><span class="line">index-servers =</span><br><span class="line">    pypi</span><br><span class="line">    pypitest</span><br><span class="line"></span><br><span class="line">[pypi]</span><br><span class="line">username: </span><br><span class="line">password: </span><br><span class="line"></span><br><span class="line">[pypitest]</span><br><span class="line">repository: https://test.pypi.org/legacy/</span><br><span class="line">username: </span><br><span class="line">password:</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure></p>
 <p>填上自己的账号密码即可，这里配置了官方的 pypi 和 pypitest，若要配置其他仓库，按格式添加。回到 PyPI 主页即可看到上传的分发包。</p>
 <h2 id="PyPI-上传推荐配置"><a href="#PyPI-上传推荐配置" class="headerlink" title="PyPI 上传推荐配置"></a>PyPI 上传推荐配置</h2><p>官网例子参考：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> setuptools <span class="keyword">import</span> setup, find_packages</span><br><span class="line">setup(</span><br><span class="line">    name=<span class="string">&quot;HelloWorld&quot;</span>,</span><br><span class="line">    version=<span class="string">&quot;0.1&quot;</span>,</span><br><span class="line">    packages=find_packages(),</span><br><span class="line">    scripts=[<span class="string">&#x27;say_hello.py&#x27;</span>],</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Project uses reStructuredText, so ensure that the docutils get</span></span><br><span class="line">    <span class="comment"># installed or upgraded on the target machine</span></span><br><span class="line">    install_requires=[<span class="string">&#x27;docutils&gt;=0.3&#x27;</span>],</span><br><span class="line"></span><br><span class="line">    package_data=&#123;</span><br><span class="line">        <span class="comment"># If any package contains *.txt or *.rst files, include them:</span></span><br><span class="line">        <span class="string">&#x27;&#x27;</span>: [<span class="string">&#x27;*.txt&#x27;</span>, <span class="string">&#x27;*.rst&#x27;</span>],</span><br><span class="line">        <span class="comment"># And include any *.msg files found in the &#x27;hello&#x27; package, too:</span></span><br><span class="line">        <span class="string">&#x27;hello&#x27;</span>: [<span class="string">&#x27;*.msg&#x27;</span>],</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment"># metadata to display on PyPI</span></span><br><span class="line">    author=<span class="string">&quot;Me&quot;</span>,</span><br><span class="line">    author_email=<span class="string">&quot;me@example.com&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;This is an Example Package&quot;</span>,</span><br><span class="line">    keywords=<span class="string">&quot;hello world example examples&quot;</span>,</span><br><span class="line">    url=<span class="string">&quot;http://example.com/HelloWorld/&quot;</span>,   <span class="comment"># project home page, if any</span></span><br><span class="line">    project_urls=&#123;</span><br><span class="line">        <span class="string">&quot;Bug Tracker&quot;</span>: <span class="string">&quot;https://bugs.example.com/HelloWorld/&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Documentation&quot;</span>: <span class="string">&quot;https://docs.example.com/HelloWorld/&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Source Code&quot;</span>: <span class="string">&quot;https://code.example.com/HelloWorld/&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    classifiers=[</span><br><span class="line">        <span class="string">&#x27;License :: OSI Approved :: Python Software Foundation License&#x27;</span></span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># could also include long_description, download_url, etc.</span></span><br><span class="line">)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
 <p>参考：<a href="https://setuptools.pypa.io/en/latest/setuptools.html#">https://setuptools.pypa.io/en/latest/setuptools.html#</a></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://cloud.tencent.com/developer/article/1683436">https://cloud.tencent.com/developer/article/1683436</a><br><a href="https://packaging.python.org/en/latest/tutorials/packaging-projects/">https://packaging.python.org/en/latest/tutorials/packaging-projects/</a><br><a href="https://zhuanlan.zhihu.com/p/276461821">https://zhuanlan.zhihu.com/p/276461821</a><br><a href="https://zhuanlan.zhihu.com/p/354110980">https://zhuanlan.zhihu.com/p/354110980</a><br><a href="https://juejin.cn/post/6844903906158313485">https://juejin.cn/post/6844903906158313485</a><br><a href="https://www.jianshu.com/p/ea9973091fdf">https://www.jianshu.com/p/ea9973091fdf</a><br><a href="http://www.coolpython.net/python_senior/project/op_py_setup_install.html">http://www.coolpython.net/python_senior/project/op_py_setup_install.html</a><br><a href="https://blog.konghy.cn/2018/04/29/setup-dot-py/">https://blog.konghy.cn/2018/04/29/setup-dot-py/</a></p>
 ]]></content>
