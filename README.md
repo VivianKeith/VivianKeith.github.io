@@ -47,6 +47,14 @@ hexo g
 hexo d
 ```
 
+5. update repo:
+
+```bash
+git add .
+git commit -m "some description"
+git push origin hexo
+```
+
 
 
 ## how to custom the theme:
@@ -58,7 +66,7 @@ modify `_config.yml` in root path and `_config.yml` in `.themes/next`，accordin
 - next -theme official doc: https://theme-next.js.org/docs
 - old-version-next-theme doc: http://theme-next.iissnan.com/
 
-
+The `next-them` itself is a git repo, as a [submodule](https://www.yiibai.com/git/git_submodule.html) when located in the homepage main repo. Therefore, after the  `_config.yml` in `.themes/next` is modified, use `git add` and `git commit` to update the [submodule repo](https://zhuanlan.zhihu.com/p/87053283) in `.themes/next`,  then commit changes in root path via `git add` and `git commit`.
 
 ## more info:
 
