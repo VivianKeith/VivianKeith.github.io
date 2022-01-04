@@ -47,6 +47,14 @@ hexo g
 hexo d
 ```
 
+5. update repo:
+
+```bash
+git add .
+git commit -m "some description"
+git push origin hexo
+```
+
 
 
 ## how to custom the theme:
