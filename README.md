@@ -62,8 +62,10 @@ If there is a need to maintain two projects separately, we can refer to:
 - http://w4lle.com/2016/06/06/Hexo-themes/index.html
 - http://andersjing.com/2018/06/30/hexo-theme/
 - https://github.com/iissnan/hexo-theme-next/issues/932
-
-
+- https://hexo.chensmallx.top/2020/06/30/hexo-all-files-sync-by-github/
+- https://xlzd.me/2017/11/30/sync-hexo/
+- https://segmentfault.com/a/1190000019459014
+- https://www.jianshu.com/p/a8a3a67ffb34
 
 ## more info:
 
