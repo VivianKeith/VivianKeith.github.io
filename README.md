@@ -54,7 +54,7 @@ modify `_config.yml` in root path and `_config.yml` in `.themes/next`，accordin
 
 ❗ **NOTE:**
 
-The `next-them` itself is a git repo. However, it is so troublesome to maintain homepage main project and theme sub project at the same time. Therefore, the `.git` in `.themes/next` is deleted so that the `next-them`  becomes a normal directory which can be commit together.
+The `next-them` itself is a git repo. However, it is so troublesome to maintain homepage main project and theme sub project at the same time. Therefore,  `.git` in `.themes/next` is deleted so that the `next-theme`  becomes a normal directory which can be commit together.
 
 If there is a need to maintain two projects separately, we can refer to:
 
