@@ -193,6 +193,113 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/30/python%20%E5%8C%85%E5%88%86%E5%8F%91%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Vivian Keith">
+      <meta itemprop="description" content="Vivian Keith's homepage">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Vivian Keith">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/12/30/python%20%E5%8C%85%E5%88%86%E5%8F%91%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">python 包分发总结</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-12-30 19:12:15" itemprop="dateCreated datePublished" datetime="2021-12-30T19:12:15+08:00">2021-12-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-01-04 11:39:28" itemprop="dateModified" datetime="2022-01-04T11:39:28+08:00">2022-01-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>平常我们习惯了使用 pip 来安装一些第三方模块，这个安装过程之所以简单，是因为模块开发者为我们默默地为我们做了所有繁杂的工作，而这个过程就是<strong>==打包==</strong>。</p>
+<p>打包，就是将你的源代码进一步封装，并且将所有的项目部署工作都事先安排好，这样使用者拿到后即装即用，不用再操心如何部署的问题（如果你不想对照着一堆部署文档手工操作的话）。</p>
+<p>不管你是在工作中，还是业余准备自己写一个可以上传到 PyPI 的项目，你都要学会如何打包你的项目。</p>
+<h1 id="1-分发包类型"><a href="#1-分发包类型" class="headerlink" title="1. 分发包类型"></a>1. 分发包类型</h1><h2 id="1-1-二进制包"><a href="#1-1-二进制包" class="headerlink" title="1.1 二进制包"></a>1.1 二进制包</h2><p>二进制包提前根据平台信息构建包，安装时省去了编译的过程，直接进行解压安装，所以安装速度较源码包来说更快。<br>由于不同平台的编译出来的包无法通用，所以在发布时，需事先编译好多个平台的包。<br>二进制包的常见格式有：</p>
+<ul>
+<li>dumb<br>包括：gztar（Unix默认），bztar，xztar，ztar，tar，zip（windows默认）</li>
+<li>rpm</li>
+<li>pkgtool</li>
+<li>sdux</li>
+<li>wininst</li>
+<li>msi</li>
+</ul>
+<h3 id="wheel"><a href="#wheel" class="headerlink" title="wheel"></a>wheel</h3><p>wheel是python新的发行标准，旨在替代传统的egg，pip &gt;=1.4的版本均支持wheel， 使用wheel作为你python库的发行文件，有如下好处：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/30/python%20%E5%8C%85%E5%88%86%E5%8F%91%E6%80%BB%E7%BB%93/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/30/%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%BF%9B%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -266,113 +373,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/12/30/%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%BF%9B%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/30/python%20%E5%8C%85%E5%88%86%E5%8F%91%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Vivian Keith">
-      <meta itemprop="description" content="Vivian Keith's homepage">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Vivian Keith">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/30/python%20%E5%8C%85%E5%88%86%E5%8F%91%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">python 包分发总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-12-30 19:12:15" itemprop="dateCreated datePublished" datetime="2021-12-30T19:12:15+08:00">2021-12-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-04 11:39:28" itemprop="dateModified" datetime="2022-01-04T11:39:28+08:00">2022-01-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>10k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>平常我们习惯了使用 pip 来安装一些第三方模块，这个安装过程之所以简单，是因为模块开发者为我们默默地为我们做了所有繁杂的工作，而这个过程就是**==打包==**。</p>
-<p>打包，就是将你的源代码进一步封装，并且将所有的项目部署工作都事先安排好，这样使用者拿到后即装即用，不用再操心如何部署的问题（如果你不想对照着一堆部署文档手工操作的话）。</p>
-<p>不管你是在工作中，还是业余准备自己写一个可以上传到 PyPI 的项目，你都要学会如何打包你的项目。</p>
-<h1 id="1-分发包类型"><a href="#1-分发包类型" class="headerlink" title="1. 分发包类型"></a>1. 分发包类型</h1><h2 id="1-1-二进制包"><a href="#1-1-二进制包" class="headerlink" title="1.1 二进制包"></a>1.1 二进制包</h2><p>二进制包提前根据平台信息构建包，安装时省去了编译的过程，直接进行解压安装，所以安装速度较源码包来说更快。<br>由于不同平台的编译出来的包无法通用，所以在发布时，需事先编译好多个平台的包。<br>二进制包的常见格式有：</p>
-<ul>
-<li>dumb<br>包括：gztar（Unix默认），bztar，xztar，ztar，tar，zip（windows默认）</li>
-<li>rpm</li>
-<li>pkgtool</li>
-<li>sdux</li>
-<li>wininst</li>
-<li>msi</li>
-</ul>
-<h3 id="wheel"><a href="#wheel" class="headerlink" title="wheel"></a>wheel</h3><p>wheel是python新的发行标准，旨在替代传统的egg，pip &gt;=1.4的版本均支持wheel， 使用wheel作为你python库的发行文件，有如下好处：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/12/30/python%20%E5%8C%85%E5%88%86%E5%8F%91%E6%80%BB%E7%BB%93/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
